@@ -32,7 +32,7 @@ void inputanAmplitudo(int *amplitude)
         if (*amplitude > 0)
         {
             printf(GREEN "\nAmplitudo yang dimasukkan adalah: %d\n\n" RESET, *amplitude);
-            break;  
+            break;
         }
         else
         {
@@ -41,11 +41,11 @@ void inputanAmplitudo(int *amplitude)
     }
 }
 
-void inputanLenght(int *length)
+void inputanLength(int *length)
 {
     while (1)
     {
-        printf("Masukkan panjang gelombang (LENGTH): ");
+        printf("Masukkan panjang gelombang (lebih dari 0): ");
         if (scanf("%d", length) != 1)
         {
             printf(RED "\nInputan tidak valid. Mohon masukkan angka!\n\n" RESET);
@@ -56,31 +56,51 @@ void inputanLenght(int *length)
         if (*length > 0)
         {
             printf(GREEN "\nPanjang gelombang yang dimasukkan adalah: %d\n\n" RESET, *length);
-            break;  
+            break;
         }
         else
         {
-            printf(RED "\nPanjang gelombang harus lebih besar dari 0. Silakan coba lagi.\n\ns" RESET);
+            printf(RED "\nPanjang gelombang harus lebih besar dari 0. Silakan coba lagi.\n\n" RESET);
         }
     }
 }
 
-void drawSinWave(int amplitude, int length)
+void calculateSinWave(int amplitude, int length, int sinWave[])
 {
-    printf("Grafik Sinusoidal:\n\n");
-
-    int sinWave[length + 1];
-
     for (int x = 0; x <= length; x++)
     {
         double radians = (2 * PI * x) / length;
         double sinValue = amplitude * sin(radians);
-
         sinWave[x] = (int)(sinValue + amplitude);
     }
+}
+
+int calculatePadding(int terminalWidth, int length)
+{
+    return (terminalWidth - length) / 2;
+}
+
+void printPadding(int padding)
+{
+    for (int p = 0; p < padding; p++)
+    {
+        printf(" ");
+    }
+}
+
+void drawSinWave(int amplitude, int length, int terminalWidth)
+{
+    printf("Grafik Sinusoidal:\n\n");
+
+    int sinWave[length + 1];
+    calculateSinWave(amplitude, length, sinWave);
+
+    int padding = calculatePadding(terminalWidth, length);
 
     for (int y = 2 * amplitude; y >= 0; y--)
     {
+        printPadding(padding);
+
         for (int x = 0; x <= length; x++)
         {
             if (sinWave[x] == y)
@@ -109,8 +129,6 @@ void printCoordinates(int length, int amplitude)
         double radians = (2 * PI * x) / length;
         double sinValue = amplitude * sin(radians);
 
-        double y = sinValue;
-
-        printf("x = %-3d | y = %.2f\n", x, y);
+        printf("x = %-3d | y = %.2f\n", x, sinValue);
     }
 }

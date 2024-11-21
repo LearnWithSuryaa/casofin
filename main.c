@@ -4,13 +4,12 @@
 int main()
 {
     int amplitude, length;
+    const int terminalWidth = 80; 
 
     inputanAmplitudo(&amplitude);
+    inputanLength(&length);
 
-    inputanLenght(&length);
-
-    drawSinWave(amplitude, length);
-    printf("\n");
+    drawSinWave(amplitude, length, terminalWidth);
     printCoordinates(length, amplitude);
 
     return 0;

@@ -1,10 +1,13 @@
 #ifndef FUNGSI_H
-#include <stdio.h>
-#include <math.h>
+#define FUNGSI_H
 
+void clearInputBuffer();
 void inputanAmplitudo(int *amplitude);
-void inputanLenght(int *length);
-void drawSinWave(int amplitude, int length);
+void inputanLength(int *length);
+void calculateSinWave(int amplitude, int length, int sinWave[]);
+int calculatePadding(int terminalWidth, int length);
+void printPadding(int padding);
+void drawSinWave(int amplitude, int length, int terminalWidth);
 void printCoordinates(int length, int amplitude);
 
 #endif
