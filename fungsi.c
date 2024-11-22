@@ -1,5 +1,7 @@
 #include <stdio.h>
 #include <math.h>
+#include <sys/ioctl.h>
+#include <unistd.h>
 #include "fungsi.h"
 
 #define RED "\033[0;31m"
@@ -17,6 +19,70 @@ void clearInputBuffer()
     }
 }
 
+int getTerminalWidth()
+{
+    struct winsize w;
+    if (ioctl(STDOUT_FILENO, TIOCGWINSZ, &w) == -1)
+    {
+        // Jika gagal membaca ukuran terminal, gunakan nilai default
+        return 80;
+    }
+    return w.ws_col;
+}
+
+
+void menuUtama()
+{
+    int pilihan;
+    int amplitude = 1;
+    int length = 1;
+    int terminalWidth = getTerminalWidth(); // Dapatkan lebar terminal secara dinamis
+    int tipeGelombang = 1;  // Default: Gelombang sinus
+
+    while (1)
+    {
+        printf("\n========= Menu Utama =========\n");
+        printf("1. Masukkan Amplitudo\n");
+        printf("2. Masukkan Panjang Gelombang\n");
+        printf("3. Pilih Tipe Gelombang (Sinus/Kosinus)\n");
+        printf("4. Tampilkan Gelombang\n");
+        printf("5. Simpan Koordinat ke File\n");
+        printf("6. Keluar\n");
+        printf("Pilihan Anda: ");
+        
+        if (scanf("%d", &pilihan) != 1)
+        {
+            printf(RED "\nInput tidak valid. Masukkan angka!\n" RESET);
+            clearInputBuffer();
+            continue;
+        }
+
+        switch (pilihan)
+        {
+        case 1:
+            inputanAmplitudo(&amplitude);
+            break;
+        case 2:
+            inputanLength(&length);
+            break;
+        case 3:
+            pilihTipeGelombang(&tipeGelombang);
+            break;
+        case 4:
+            drawWave(amplitude, length, terminalWidth, tipeGelombang);
+            break;
+        case 5:
+            simpanKeFile(amplitude, length, tipeGelombang);
+            break;
+        case 6:
+            printf(GREEN "\nTerima kasih telah menggunakan program ini!\n" RESET);
+            return;
+        default:
+            printf(RED "\nPilihan tidak valid. Silakan coba lagi.\n" RESET);
+        }
+    }
+}
+
 void inputanAmplitudo(int *amplitude)
 {
     while (1)
@@ -24,19 +90,19 @@ void inputanAmplitudo(int *amplitude)
         printf("Masukkan nilai amplitudo (lebih dari 0): ");
         if (scanf("%d", amplitude) != 1)
         {
-            printf(RED "\nInputan tidak valid. Mohon masukkan angka!\n\n" RESET);
+            printf(RED "\nInputan tidak valid. Mohon masukkan angka!\n" RESET);
             clearInputBuffer();
             continue;
         }
 
         if (*amplitude > 0)
         {
-            printf(GREEN "\nAmplitudo yang dimasukkan adalah: %d\n\n" RESET, *amplitude);
+            printf(GREEN "\nAmplitudo yang dimasukkan adalah: %d\n" RESET, *amplitude);
             break;
         }
         else
         {
-            printf(RED "\nAmplitudo harus lebih besar dari 0. Silakan coba lagi.\n\n" RESET);
+            printf(RED "\nAmplitudo harus lebih besar dari 0. Silakan coba lagi.\n" RESET);
         }
     }
 }
@@ -48,30 +114,20 @@ void inputanLength(int *length)
         printf("Masukkan panjang gelombang (lebih dari 0): ");
         if (scanf("%d", length) != 1)
         {
-            printf(RED "\nInputan tidak valid. Mohon masukkan angka!\n\n" RESET);
+            printf(RED "\nInputan tidak valid. Mohon masukkan angka!\n" RESET);
             clearInputBuffer();
             continue;
         }
 
         if (*length > 0)
         {
-            printf(GREEN "\nPanjang gelombang yang dimasukkan adalah: %d\n\n" RESET, *length);
+            printf(GREEN "\nPanjang gelombang yang dimasukkan adalah: %d\n" RESET, *length);
             break;
         }
         else
         {
-            printf(RED "\nPanjang gelombang harus lebih besar dari 0. Silakan coba lagi.\n\n" RESET);
+            printf(RED "\nPanjang gelombang harus lebih besar dari 0. Silakan coba lagi.\n" RESET);
         }
-    }
-}
-
-void calculateSinWave(int amplitude, int length, int sinWave[])
-{
-    for (int x = 0; x <= length; x++)
-    {
-        double radians = (2 * PI * x) / length;
-        double sinValue = amplitude * sin(radians);
-        sinWave[x] = (int)(sinValue + amplitude);
     }
 }
 
@@ -88,19 +144,42 @@ void printPadding(int padding)
     }
 }
 
-void drawSinWave(int amplitude, int length, int terminalWidth)
+void pilihTipeGelombang(int *tipeGelombang)
 {
-    printf("Grafik Sinusoidal:\n\n");
+    printf("\nPilih tipe gelombang:\n");
+    printf("1. Sinus\n");
+    printf("2. Kosinus\n");
+    printf("Pilihan Anda: ");
+    
+    if (scanf("%d", tipeGelombang) != 1 || (*tipeGelombang != 1 && *tipeGelombang != 2))
+    {
+        printf(RED "\nInput tidak valid. Pilihan default adalah Sinus.\n" RESET);
+        *tipeGelombang = 1;
+        clearInputBuffer();
+    }
+    else
+    {
+        printf(GREEN "\nTipe gelombang berhasil diubah.\n" RESET);
+    }
+}
+
+void drawWave(int amplitude, int length, int terminalWidth, int tipeGelombang)
+{
+    printf("Grafik Gelombang:\n\n");
 
     int sinWave[length + 1];
-    calculateSinWave(amplitude, length, sinWave);
+    for (int x = 0; x <= length; x++)
+    {
+        double radians = (2 * PI * x) / length;
+        double value = (tipeGelombang == 1) ? sin(radians) : cos(radians);
+        sinWave[x] = (int)(amplitude * value + amplitude);
+    }
 
     int padding = calculatePadding(terminalWidth, length);
 
     for (int y = 2 * amplitude; y >= 0; y--)
     {
         printPadding(padding);
-
         for (int x = 0; x <= length; x++)
         {
             if (sinWave[x] == y)
@@ -120,15 +199,61 @@ void drawSinWave(int amplitude, int length, int terminalWidth)
     }
 }
 
-void printCoordinates(int length, int amplitude)
+void simpanKeFile(int amplitude, int length, int tipeGelombang)
 {
-    printf("\nTitik Koordinat (x, y):\n\n");
+    char filename[100];
+    printf("Masukkan nama file untuk menyimpan data (contoh: grafik.txt): ");
+    scanf("%s", filename);
 
+    FILE *file = fopen(filename, "w");
+    if (file == NULL)
+    {
+        printf(RED "\nGagal membuat file. Pastikan nama file valid.\n" RESET);
+        return;
+    }
+
+    // Menentukan nama gelombang
+    const char *namaGelombang = (tipeGelombang == 1) ? "Sinus" : "Kosinus";
+
+    // Header untuk data koordinat
+    fprintf(file, "x   |   y (%s)\n", namaGelombang);
+    fprintf(file, "----|------------\n");
+
+    int sinWave[length + 1];
+
+    // Simpan koordinat dan hitung nilai y
     for (int x = 0; x <= length; x++)
     {
         double radians = (2 * PI * x) / length;
-        double sinValue = amplitude * sin(radians);
-
-        printf("x = %-3d | y = %.2f\n", x, sinValue);
+        double value = (tipeGelombang == 1) ? sin(radians) : cos(radians);
+        sinWave[x] = (int)(amplitude * value + amplitude); // Posisi y untuk grafik
+        fprintf(file, "%-3d | %10.2f\n", x, amplitude * value);
     }
+
+    // Header untuk grafik
+    fprintf(file, "\nGrafik Gelombang (%s):\n\n", namaGelombang);
+
+    // Simpan grafik ASCII
+    for (int y = 2 * amplitude; y >= 0; y--)
+    {
+        for (int x = 0; x <= length; x++)
+        {
+            if (sinWave[x] == y)
+            {
+                fprintf(file, "S"); // Titik gelombang
+            }
+            else if (y == amplitude)
+            {
+                fprintf(file, "-"); // Sumbu x
+            }
+            else
+            {
+                fprintf(file, " "); // Spasi kosong
+            }
+        }
+        fprintf(file, "\n");
+    }
+
+    fclose(file);
+    printf(GREEN "\nData koordinat dan grafik berhasil disimpan ke file: %s\n" RESET, filename);
 }
