@@ -1,18 +1,21 @@
-
 # 🎨 Program Visualisasi Gelombang Sinusoidal
 
 Program ini dirancang untuk membantu mahasiswa memahami konsep **gelombang sinusoidal** dengan cara visual yang interaktif. Dengan program ini, Anda dapat:
 - Menginput nilai **amplitudo** dan **panjang gelombang**.
-- Melihat grafik gelombang sinusoidal di terminal.
+- Memilih tipe gelombang: **Sinus** atau **Kosinus**.
+- Melihat grafik gelombang sinusoidal atau kosinus langsung di terminal.
 - Mengetahui koordinat `(x, y)` untuk setiap titik gelombang.
+- Menyimpan data koordinat dan grafik ke dalam file.
 
 ---
 
 ## ✨ Fitur
 
 ✅ **Validasi Input**: Memastikan input berupa bilangan bulat positif.  
-✅ **Visualisasi Gelombang**: Menampilkan grafik sinusoidal langsung di terminal.  
-✅ **Titik Koordinat**: Menampilkan daftar koordinat `(x, y)` setiap titik dalam satu panjang gelombang.
+✅ **Visualisasi Gelombang**: Menampilkan grafik gelombang sinusoidal atau kosinus di terminal.  
+✅ **Titik Koordinat**: Menampilkan daftar koordinat `(x, y)` setiap titik dalam satu panjang gelombang.  
+✅ **Penyimpanan File**: Menyimpan koordinat dan grafik gelombang ke dalam file (misalnya, `data.csv` atau `grafik.txt`).  
+✅ **Pilihan Tipe Gelombang**: Memilih antara gelombang **Sinus** atau **Kosinus** untuk divisualisasikan dan disimpan.
 
 ---
 
@@ -35,7 +38,6 @@ Pastikan Anda memiliki:
    git clone https://github.com/LearnWithSuryaa/casofin
    cd casofin
    ```
-   
 
 #### 1️⃣ Kompilasi Program
 Jalankan perintah berikut pada terminal untuk mengompilasi program:
@@ -54,13 +56,18 @@ make run
 ```
 Program akan meminta Anda untuk memasukkan:
 1. **Amplitudo**: Nilai bilangan bulat positif (> 0).  
-2. **Panjang Gelombang**: Nilai bilangan bulat positif (> 0).  
+2. **Panjang Gelombang**: Nilai bilangan bulat positif (> 0).
+3. **Tipe Gelombang**: Memilih antara **Sinus** atau **Kosinus**.
 
 Setelah input diterima, program akan:
-- Menampilkan **grafik gelombang sinusoidal**.
+- Menampilkan **grafik gelombang sinusoidal atau kosinus**.
 - Menampilkan daftar **koordinat titik `(x, y)`**.
+- Memberikan pilihan untuk **menyimpan data koordinat dan grafik** ke dalam file.
 
-#### 3️⃣ Membersihkan File
+#### 3️⃣ Menyimpan Koordinat dan Grafik ke File
+Setelah gelombang ditampilkan, Anda dapat memilih untuk menyimpan koordinat dan grafik ke dalam file. Program akan menanyakan nama file yang ingin digunakan (misalnya `grafik.txt` atau `data.csv`).
+
+#### 4️⃣ Membersihkan File
 Untuk membersihkan file yang dihasilkan seperti file object (`.o`) dan file eksekusi (`surya`), gunakan perintah:
 ```bash
 make clean
@@ -74,12 +81,16 @@ make clean
 ```
 Masukkan nilai amplitudo (lebih dari 0): 5
 Masukkan panjang gelombang (LENGTH): 20
+Pilih tipe gelombang:
+1. Sinus
+2. Kosinus
+Pilihan Anda: 1
 ```
 
 ### Output:
-#### Grafik Gelombang:
+#### Grafik Gelombang (Sinus):
 ```
-Grafik Sinusoidal:
+Grafik Gelombang Sinusoidal:
 
      S        S        
     S  S     S  S      
@@ -103,6 +114,13 @@ x = 1   | y = 1.47
 x = 2   | y = 2.85
 ...
 x = 20  | y = 0.00
+```
+
+### Menyimpan ke File:
+```
+Masukkan nama file untuk menyimpan data (contoh: grafik.txt): data.csv
+
+Data berhasil disimpan ke file: data.csv
 ```
 
 ---
