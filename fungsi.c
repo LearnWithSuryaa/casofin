@@ -24,7 +24,6 @@ int getTerminalWidth()
     struct winsize w;
     if (ioctl(STDOUT_FILENO, TIOCGWINSZ, &w) == -1)
     {
-        // Jika gagal membaca ukuran terminal, gunakan nilai default
         return 80;
     }
     return w.ws_col;
@@ -36,8 +35,8 @@ void menuUtama()
     int pilihan;
     int amplitude = 1;
     int length = 1;
-    int terminalWidth = getTerminalWidth(); // Dapatkan lebar terminal secara dinamis
-    int tipeGelombang = 1;  // Default: Gelombang sinus
+    int terminalWidth = getTerminalWidth();
+    int tipeGelombang = 1;  
 
     while (1)
     {
@@ -212,43 +211,38 @@ void simpanKeFile(int amplitude, int length, int tipeGelombang)
         return;
     }
 
-    // Menentukan nama gelombang
     const char *namaGelombang = (tipeGelombang == 1) ? "Sinus" : "Kosinus";
 
-    // Header untuk data koordinat
     fprintf(file, "x   |   y (%s)\n", namaGelombang);
     fprintf(file, "----|------------\n");
 
     int sinWave[length + 1];
 
-    // Simpan koordinat dan hitung nilai y
     for (int x = 0; x <= length; x++)
     {
         double radians = (2 * PI * x) / length;
         double value = (tipeGelombang == 1) ? sin(radians) : cos(radians);
-        sinWave[x] = (int)(amplitude * value + amplitude); // Posisi y untuk grafik
+        sinWave[x] = (int)(amplitude * value + amplitude); 
         fprintf(file, "%-3d | %10.2f\n", x, amplitude * value);
     }
 
-    // Header untuk grafik
     fprintf(file, "\nGrafik Gelombang (%s):\n\n", namaGelombang);
 
-    // Simpan grafik ASCII
     for (int y = 2 * amplitude; y >= 0; y--)
     {
         for (int x = 0; x <= length; x++)
         {
             if (sinWave[x] == y)
             {
-                fprintf(file, "S"); // Titik gelombang
+                fprintf(file, "S");
             }
             else if (y == amplitude)
             {
-                fprintf(file, "-"); // Sumbu x
+                fprintf(file, "-"); 
             }
             else
             {
-                fprintf(file, " "); // Spasi kosong
+                fprintf(file, " ");
             }
         }
         fprintf(file, "\n");
